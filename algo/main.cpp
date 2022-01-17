@@ -8,8 +8,8 @@
 #define max_index 120
 #define min_index -30
 #define base 1.05
-#define recall_cost 1.0
-#define forget_cost 1.0
+#define recall_cost 3.0
+#define forget_cost 15.0
 #define d_limit 20
 #define d_offset 2
 
@@ -94,7 +94,7 @@ int main() {
                 ofstream cost_out(name);
                 sprintf(name, "./result/recall-%d.csv", d);
                 ofstream recall_out(name);
-                for (int k = 0; k < index_len - 1; k++) {
+                for (int k = 0; k <= index_len - 1; k++) {
                     used_interval_out << halflife_list[k] << ',' << used_interval_list[d - 1][k] << '\n';
                     cost_out << halflife_list[k] << ',' << cost_list[d - 1][k] << '\n';
                     recall_out << halflife_list[k] << ',' << recall_list[d - 1][k] << '\n';

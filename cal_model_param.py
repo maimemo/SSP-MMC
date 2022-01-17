@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 
+plt.style.use('seaborn-whitegrid')
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
 plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 plt.rcParams['figure.figsize'] = (8.0, 6.0)
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     Y = raw[['log_halflife']]
 
     lr = LinearRegression()
-    lr.fit(X, Y,sample_weight=raw['group_cnt'])
+    lr.fit(X, Y, sample_weight=raw['group_cnt'])
     print('Intercept: ', lr.intercept_)
     print('Slope: ', lr.coef_)
 
@@ -49,6 +50,8 @@ if __name__ == "__main__":
           np.sqrt(metrics.mean_squared_error(Y, y_pred, sample_weight=raw['group_cnt'])))
 
     plt.scatter(Y, y_pred)
+    plt.xlabel('true log(halflife)')
+    plt.ylabel('predict log(halflife)')
     plt.show()
 
     a = lr.intercept_[0]
@@ -85,4 +88,6 @@ if __name__ == "__main__":
           np.sqrt(metrics.mean_squared_error(Y, y_pred, sample_weight=raw_copy['group_cnt'])))
 
     plt.scatter(Y, y_pred)
+    plt.xlabel('true log(halflife)')
+    plt.ylabel('predict log(halflife)')
     plt.show()

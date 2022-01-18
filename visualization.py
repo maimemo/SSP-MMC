@@ -59,7 +59,7 @@ def dhp_model_visualize():
     fig.write_html(f"./plot/DHP_recall_model.html")
     fig.show()
     surface = [
-        go.Surface(x=h_array, y=p_array, z=cal_recall_halflife(diff, h_array, p_array)/h_array,
+        go.Surface(x=h_array, y=p_array, z=cal_recall_halflife(diff, h_array, p_array) / h_array,
                    surfacecolor=np.full_like(h_array, diff), cmin=0.5, cmax=10.5) for diff in
         range(1, 11)]
     fig = go.Figure(data=surface)
@@ -88,10 +88,10 @@ def policy_action_visualize():
         dataset = pd.read_csv(f"./algo/result/ivl-{d}.csv", header=None, index_col=None)
         dataset.columns = ['halflife', f'{d}']
         df = pd.concat([df, dataset[f'{d}']], axis=1)
-    halflife = dataset['halflife'].values[:-1]
+    halflife = dataset['halflife'].values[30:-1]
     difficulty = np.arange(1, 21, 1)
     difficulty, halflife = np.meshgrid(difficulty, halflife)
-    delta_t = df.values[:-1,:]
+    delta_t = df.values[30:-1, :]
     fig = go.Figure(data=go.Surface(x=halflife, y=difficulty, z=delta_t))
     fig.update_layout(scene=dict(
         xaxis_title='halflife',
@@ -105,11 +105,11 @@ def policy_action_visualize():
         dataset = pd.read_csv(f"./algo/result/cost-{d}.csv", header=None, index_col=None)
         dataset.columns = ['halflife', f'{d}']
         df = pd.concat([df, dataset[f'{d}']], axis=1)
-    halflife = dataset['halflife'].values
+    halflife = dataset['halflife'].values[30:-1]
     difficulty = np.arange(1, 21, 1)
     difficulty, halflife = np.meshgrid(difficulty, halflife)
-    delta_t = df.values
-    fig = go.Figure(data=go.Surface(x=halflife, y=difficulty, z=delta_t))
+    cost = df.values[30:-1, :]
+    fig = go.Figure(data=go.Surface(x=halflife, y=difficulty, z=cost))
     fig.update_layout(scene=dict(
         xaxis_title='halflife',
         yaxis_title='difficulty',
@@ -117,8 +117,25 @@ def policy_action_visualize():
     fig.write_html(f"./plot/policy_cost.html")
     fig.show()
 
+    df = pd.DataFrame()
+    for d in range(1, 21):
+        dataset = pd.read_csv(f"./algo/result/recall-{d}.csv", header=None, index_col=None)
+        dataset.columns = ['halflife', f'{d}']
+        df = pd.concat([df, dataset[f'{d}']], axis=1)
+    halflife = dataset['halflife'].values[30:-1]
+    difficulty = np.arange(1, 21, 1)
+    difficulty, halflife = np.meshgrid(difficulty, halflife)
+    p_recall = df.values[30:-1, :]
+    fig = go.Figure(data=go.Surface(x=halflife, y=difficulty, z=p_recall))
+    fig.update_layout(scene=dict(
+        xaxis_title='halflife',
+        yaxis_title='difficulty',
+        zaxis_title='p_recall'))
+    fig.write_html(f"./plot/policy_p_recall.html")
+    fig.show()
+
 
 if __name__ == "__main__":
     raw_data_visualize()
-    # dhp_model_visualize()
-    # policy_action_visualize()
+    dhp_model_visualize()
+    policy_action_visualize()

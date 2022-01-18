@@ -12,8 +12,8 @@ plt.rcParams['figure.dpi'] = 300
 
 if __name__ == "__main__":
     raw = pd.read_csv('./data/halflife_for_visual.tsv', sep='\t')
-    # raw = raw[raw['group_cnt'] > 10000]
     raw.drop_duplicates(inplace=True)
+    raw = raw[raw['group_cnt'] > 1000]
     raw['r_history'] = raw['r_history'].map(str)
     raw_copy = raw.copy()
     raw.dropna(inplace=True)
@@ -30,8 +30,8 @@ if __name__ == "__main__":
     corr = raw.corr()
     print(corr)
 
-    X = raw[['log_d', 'log_h', 'fi']]
-    Y = raw[['log_halflife']]
+    X = raw[['log_d', 'log_h', 'log_fi']]
+    Y = raw[['log_hinc']]
 
     lr = LinearRegression()
     lr.fit(X, Y, sample_weight=raw['group_cnt'])
@@ -48,6 +48,9 @@ if __name__ == "__main__":
           metrics.mean_squared_error(Y, y_pred, sample_weight=raw['group_cnt']))
     print('Root Mean Squared Error:',
           np.sqrt(metrics.mean_squared_error(Y, y_pred, sample_weight=raw['group_cnt'])))
+
+    raw['predict_log_hinc'] = y_pred
+    outlier = raw[raw['log_hinc'] < -1]
 
     plt.scatter(Y, y_pred)
     plt.xlabel('true log(halflife)')
@@ -68,7 +71,7 @@ if __name__ == "__main__":
 
     print(raw_copy.corr())
 
-    X = raw_copy[['log_d', 'log_h', 'fi']]
+    X = raw_copy[['log_d', 'log_h', 'log_fi']]
     Y = raw_copy[['log_halflife']]
 
     lr = LinearRegression()

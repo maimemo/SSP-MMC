@@ -22,11 +22,12 @@ def cal_start_halflife(difficulty):
 
 
 def cal_recall_halflife(difficulty, halflife, p_recall):
-    return np.exp(1.83) * np.power(difficulty, -0.305) * np.power(halflife, 0.765) * np.exp(1.26 * (1 - p_recall))
+    # return np.exp(1.83) * np.power(difficulty, -0.305) * np.power(halflife, 0.765) * np.exp(1.26 * (1 - p_recall))
+    return halflife * (1 + np.exp(3.76) * np.power(difficulty, -0.689) * np.power(halflife, - 0.2) * (1 - p_recall))
 
 
 def cal_forget_halflife(difficulty, halflife, p_recall):
-    return np.exp(0.5) * np.power(difficulty, -0.068) * np.power(halflife, 0.4) * np.exp(-0.688 * (1 - p_recall))
+    return np.exp(0.098) * np.power(difficulty, -0.097) * np.power(halflife, 0.42) * np.power(1 - p_recall, -0.16)
 
 
 def intensity(t, n_t, q):

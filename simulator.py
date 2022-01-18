@@ -68,14 +68,14 @@ def scheduler(difficulty, halflife, reps, lapses, method):
     elif method == 'anki':
         interval = max(2.5 - 0.15 * lapses, 1.2) ** reps
     elif method == 'threshold':
-        interval = - halflife * np.log2(0.9)
+        interval = - halflife * np.log2(0.8)
     return max(1, round(interval))
 
 
 if __name__ == "__main__":
     scheduler_init()
 
-    for method in ['memorize', 'ssp-mmc', 'halflife', 'anki', 'threshold']:
+    for method in ['ssp-mmc', 'memorize', 'halflife', 'anki', 'threshold']:
         print("method:", method)
         random.seed(114)
 

@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     print(raw_copy.corr())
 
-    X = raw_copy[['log_h', 'fi']]
+    X = raw_copy[['log_d', 'log_h', 'fi']]
     Y = raw_copy[['log_halflife']]
 
     lr = LinearRegression()

@@ -17,7 +17,7 @@ def dsr(line, h, d):
             h = cal_start_halflife(d)
         else:
             p_recall = np.exp2(- interval / h)
-            h = cal_forget_halflife(h, p_recall)
+            h = cal_forget_halflife(d, h, p_recall)
             d = min(d + 2, 20)
     return h, d
 

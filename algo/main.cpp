@@ -23,7 +23,7 @@ float cal_next_recall_halflife(float h, float p, int d, int recall) {
     if (recall == 1) {
         return exp(1.83) * pow(d, -0.305) * pow(h, 0.765) * exp(1.26 * (1 - p));
     } else {
-        return exp(0.44) * pow(h, 0.39) * exp(-0.84 * (1 - p));
+        return exp(0.5) * pow(d, -0.068)  * pow(h, 0.4) * exp(-0.688 * (1 - p));
     }
 }
 

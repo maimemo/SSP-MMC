@@ -17,16 +17,13 @@ difficulty_limit = 20
 target_halflife = 300
 
 period_len = 15  # 滚动平均区间
-learn_days = 300  # 模拟时长
+learn_days = 1000  # 模拟时长
 deck_size = 100000  # 新卡片总量
-per_day_limit = 1000
-new_limit = 1000
-review_limit = 1000
 
 recall_cost = 3
 forget_cost = 15
 new_cost = 6
-day_cost_limit = 3000
+day_cost_limit = 600
 
 
 def difficulty_distribution(x):
@@ -91,7 +88,8 @@ if __name__ == "__main__":
         record_per_day = np.array([0.0] * learn_days)
         meet_target_per_day = np.array([0.0] * learn_days)
 
-        feature_list = ['difficulty', 'halflife', 'p_recall', 'delta_t', 'reps', 'lapses', 'last_date', 'due_date']
+        feature_list = ['difficulty', 'halflife', 'p_recall', 'delta_t', 'reps', 'lapses', 'last_date', 'due_date',
+                        'r_history', 't_history']
 
         dtypes = np.dtype([
             ('difficulty', int),
@@ -102,11 +100,15 @@ if __name__ == "__main__":
             ('lapses', int),
             ('last_date', int),
             ('due_date', int),
+            ('r_history', int),
+            ('t_history', int),
         ])
 
         field_map = {
             'difficulty': 0, 'halflife': 1, 'p_recall': 2, 'delta_t': 3, 'reps': 4, 'lapses': 5, 'last_date': 6,
-            'due_date': 7}
+            'due_date': 7,
+            'r_history': 8,
+            't_history': 9}
 
         df_memory = pd.DataFrame(np.full(deck_size, np.nan, dtype=dtypes), index=range(deck_size), columns=feature_list)
         df_memory['difficulty'] = df_memory['difficulty'].map(lambda x: difficulty_distribution(random.random()))
@@ -122,13 +124,14 @@ if __name__ == "__main__":
             df_memory["delta_t"] = day - df_memory["last_date"]
             df_memory["p_recall"] = np.exp2(- df_memory["delta_t"] / df_memory["halflife"])
             need_review = df_memory[df_memory['due_date'] <= day].index
-            # true_review = need_review.index[:review_limit]
             for idx in need_review:
                 if day_cost > day_cost_limit:
                     break
 
                 reviewed += 1
                 df_memory.iat[idx, field_map['last_date']] = day
+                ivl = df_memory.iat[idx, field_map['delta_t']]
+                df_memory.iat[idx, field_map['t_history']] += f',{ivl}'
 
                 halflife = df_memory.iat[idx, field_map['halflife']]
                 difficulty = df_memory.iat[idx, field_map['difficulty']]
@@ -138,6 +141,8 @@ if __name__ == "__main__":
 
                 if random.random() < p_recall:
                     day_cost += recall_cost
+
+                    df_memory.iat[idx, field_map['r_history']] += '1'
 
                     next_halflife = cal_recall_halflife(difficulty, halflife, p_recall)
                     df_memory.iat[idx, field_map['halflife']] = next_halflife
@@ -154,7 +159,9 @@ if __name__ == "__main__":
                 else:
                     day_cost += forget_cost
 
-                    next_halflife = cal_forget_halflife(halflife, p_recall)  # halflife
+                    df_memory.iat[idx, field_map['r_history']] += '0'
+
+                    next_halflife = cal_forget_halflife(difficulty, halflife, p_recall)
                     df_memory.iat[idx, field_map['halflife']] = next_halflife
 
                     reps = 0
@@ -170,7 +177,6 @@ if __name__ == "__main__":
                     df_memory.iat[idx, field_map['difficulty']] = difficulty
 
             need_learn = df_memory[df_memory['halflife'].isna()].index
-            # true_learn = need_learn.index[:min(new_limit, per_day_limit - len(true_review))]
 
             for idx in need_learn:
                 if day_cost > day_cost_limit:
@@ -188,6 +194,8 @@ if __name__ == "__main__":
                 df_memory.iat[idx, field_map['halflife']] = halflife
                 delta_t = scheduler(difficulty, halflife, reps, lapses, method)
                 df_memory.iat[idx, field_map['due_date']] = day + delta_t
+                df_memory.iat[idx, field_map['r_history']] = '0'
+                df_memory.iat[idx, field_map['t_history']] = '0'
 
             new_item_per_day[day] = learned
             learned_per_day[day] = learned_per_day[day - 1] + learned
@@ -236,25 +244,25 @@ if __name__ == "__main__":
     plt.legend()
     plt.grid(True)
     plt.figure(2)
-    plt.title(f"day cost limit:{per_day_limit}-learn days:{learn_days}")
+    plt.title(f"day cost limit:{day_cost_limit}-learn days:{learn_days}")
     plt.xlabel("days")
     plt.ylabel("num of meet target halflife")
     plt.legend()
     plt.grid(True)
     plt.figure(3)
-    plt.title(f"day cost limit:{per_day_limit}-learn days:{learn_days}")
+    plt.title(f"day cost limit:{day_cost_limit}-learn days:{learn_days}")
     plt.xlabel("days")
     plt.ylabel(f"new item per day({period_len} days average)")
     plt.legend()
     plt.grid(True)
     plt.figure(4)
-    plt.title(f"day cost limit:{per_day_limit}-learn days:{learn_days}")
+    plt.title(f"day cost limit:{day_cost_limit}-learn days:{learn_days}")
     plt.xlabel("days")
     plt.ylabel(f"cost per day({period_len} days average)")
     plt.legend()
     plt.grid(True)
     plt.figure(5)
-    plt.title(f"day cost limit:{per_day_limit}-learn days:{learn_days}")
+    plt.title(f"day cost limit:{day_cost_limit}-learn days:{learn_days}")
     plt.xlabel("days")
     plt.ylabel(f"num of accumulated learned item({period_len} days average)")
     plt.legend()

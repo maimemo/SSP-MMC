@@ -3,7 +3,7 @@ import pandas as pd
 from model.utils import *
 
 
-def dsr(line, h, d):
+def dhp(line, h, d):
     recall = int(line[0])
     interval = int(line[1])
     if recall == 1:
@@ -18,7 +18,7 @@ def dsr(line, h, d):
         else:
             p_recall = np.exp2(- interval / h)
             h = cal_forget_halflife(d, h, p_recall)
-            d = min(d + 2, 20)
+            d = min(d + 2, 18)
     return h, d
 
 
@@ -36,7 +36,7 @@ def eval(testset, repeat, fold):
         ph = 0
         d = line['difficulty']
         for j in range(line_tensor.size()[0]):
-            ph, d = dsr(line_tensor[j][0], ph, d)
+            ph, d = dhp(line_tensor[j][0], ph, d)
 
         # print(f'model: {m}\tsample: {line}\tcorrect: {interval}\tpredict: {float(output)}')
 
@@ -56,7 +56,7 @@ def eval(testset, repeat, fold):
              'pp': [round(pp, 3)], 'p_loss': [round(abs(p - pp), 3)], 'h_loss': [round(abs((ph - h) / h), 3)],
              'total_cnt': [line['total_cnt']]})],
                            ignore_index=True)
-    print(f"model: dsr")
+    print(f"model: dhp")
     print(f'sample num: {count}')
     print(f"avg p loss: {p_loss / count}")
     print(f"avg h loss: {h_loss / count}")

@@ -5,26 +5,26 @@
 #include <fstream>
 
 #define iterations 200000
-#define max_index 120
+#define max_index 122
 #define min_index -30
 #define base 1.05
 #define recall_cost 3.0
-#define forget_cost 15.0
-#define d_limit 20
+#define forget_cost 9.0
+#define d_limit 18
 #define d_offset 2
 
 using namespace std;
 
 float cal_start_halflife(int difficulty) {
-    return 5.25 * pow(difficulty, -0.866);
+    float p = max(0.925 - 0.05 * difficulty, 0.025);
+    return - 1 / log2(p);
 }
 
 float cal_next_recall_halflife(float h, float p, int d, int recall) {
     if (recall == 1) {
-//return exp(1.83) * pow(d, -0.305) * pow(h, 0.765) * exp(1.26 * (1 - p));
-        return h * (1 + exp(3.76) * pow(d, -0.689) * pow(h, -0.2) * (1 - p));
+        return h * (1 + exp(3.80863264) * pow(d, -0.53420593) * pow(h, -0.127362) * pow(1 - p, 0.967804));
     } else {
-        return exp(0.098) * pow(d, -0.097) * pow(h, 0.42) * pow(1 - p, -0.16);
+        return exp(-0.04158382) * pow(d, -0.04067209) * pow(h, 0.37745957) * pow(1 - p, -0.22724425);
     }
 }
 
@@ -64,7 +64,7 @@ int main() {
                 int interval_min;
                 int interval_max;
 
-                interval_min = max(1, (int) round(halflife * log(0.95) / log(0.5)));
+                interval_min = 1;
                 interval_max = max(1, (int) round(halflife * log(0.3) / log(0.5)));
 
                 for (int interval = interval_max; interval >= interval_min; interval--) {

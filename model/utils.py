@@ -18,16 +18,18 @@ def lineToTensor(line):
 
 
 def cal_start_halflife(difficulty):
-    return 5.25 * np.power(difficulty, -0.866)
+    return - 1 / np.log2(max(0.925 - 0.05 * difficulty, 0.025))
 
 
 def cal_recall_halflife(difficulty, halflife, p_recall):
-    # return np.exp(1.83) * np.power(difficulty, -0.305) * np.power(halflife, 0.765) * np.exp(1.26 * (1 - p_recall))
-    return halflife * (1 + np.exp(3.76) * np.power(difficulty, -0.689) * np.power(halflife, - 0.2) * (1 - p_recall))
+    return halflife * (
+            1 + np.exp(3.80863264) * np.power(difficulty, -0.53420593) * np.power(halflife, -0.127362) * np.power(
+        1 - p_recall, 0.9678043))
 
 
 def cal_forget_halflife(difficulty, halflife, p_recall):
-    return np.exp(0.098) * np.power(difficulty, -0.097) * np.power(halflife, 0.42) * np.power(1 - p_recall, -0.16)
+    return np.exp(-0.04158382) * np.power(difficulty, -0.04067209) * np.power(halflife, 0.37745957) * np.power(
+        1 - p_recall, -0.22724425)
 
 
 def intensity(t, n_t, q):

@@ -1,3 +1,5 @@
+import time
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
@@ -11,26 +13,96 @@ plt.rcParams['figure.figsize'] = (8.0, 6.0)
 plt.rcParams['figure.dpi'] = 300
 
 
+def difficulty_visualize():
+    raw = pd.read_csv('./data/opensource_dataset_difficulty.tsv', sep='\t')
+    u = raw['p_recall'].mean()
+    std = raw['p_recall'].std()
+    print(u, std)
+    fig = px.histogram(raw, x="p_recall", nbins=20)
+    fig.update_xaxes(title_text='probability of P(recall)')
+    fig.update_layout(bargap=0.2)
+    # fig.show()
+    fig.write_image("plot/distribution_p.pdf")
+    time.sleep(3)
+    fig.write_image("plot/distribution_p.pdf")
+    fig = px.histogram(raw, x="d", text_auto=True)
+    fig.update_xaxes(title_text='difficulty')
+    fig.update_layout(bargap=0.2)
+    # fig.show()
+    fig.write_image("plot/distribution_d.pdf")
+    time.sleep(3)
+    fig.write_image("plot/distribution_d.pdf")
+
+
+def forgetting_curve_visualize():
+    raw = pd.read_csv('./data/halflife_for_fit.tsv', sep='\t')
+    filters = [(4, '0,1', '0,1'), (4, '0,1,1', '0,1,3'), (4, '0,1,1', '0,1,4'), (4, '0,1,1', '0,1,5')]
+    fig = go.Figure()
+    color = ['blue', 'red', 'green', 'orange']
+    for i, f in enumerate(filters):
+        d = f[0]
+        r_history = f[1]
+        t_history = f[2]
+        tmp = raw[(raw['d'] == d) & (raw['r_history'] == r_history) & (raw['t_history'] == t_history)].copy()
+        tmp.sort_values(by=['delta_t'], inplace=True)
+        tmp['size'] = np.log(tmp['total_cnt'])
+        halflife = tmp['halflife'].values[0]
+        tmp['fit_p_recall'] = np.power(2, -tmp['delta_t'] / halflife)
+        fig.add_trace(
+            go.Scatter(x=tmp['delta_t'], y=tmp['fit_p_recall'], mode='lines', name=f'halflife={halflife:.2f}'))
+        fig.add_trace(go.Scatter(x=tmp['delta_t'], y=tmp['p_recall'],
+                                 mode='markers', marker_size=tmp['size'],
+                                 name=r'$d=%d|\boldsymbol r_{1:i-1}=%s|\boldsymbol{\Delta t}_{1:i-1}=%s$' % (
+                                     d, r_history, t_history)))
+        fig.update_traces(marker_color=color[i], selector=dict(name=f'halflife={halflife:.2f}'))
+        fig.update_traces(marker_color=color[i],
+                          selector=dict(name=r'$d=%d|\boldsymbol r_{1:i-1}=%s|\boldsymbol{\Delta t}_{1:i-1}=%s$' % (
+                              d, r_history, t_history)))
+    fig.update_layout(legend=dict(
+        yanchor="bottom",
+        y=0.01,
+        xanchor="right",
+        x=0.99
+    ))
+    fig.update_xaxes(title_text='delta_t')
+    fig.update_yaxes(title_text='p_recall')
+    # fig.show()
+    fig.write_image(f"plot/forgetting_curve.pdf")
+    time.sleep(3)
+    fig.write_image(f"plot/forgetting_curve.pdf")
+
+
 def raw_data_visualize():
     raw = pd.read_csv('./data/halflife_for_visual.tsv', sep='\t')
-    raw['r_history'] = raw['r_history'].map(str)
+    raw = raw[raw['group_cnt'] > 1000]
     raw['label'] = raw['r_history'] + '/' + raw['t_history']
-    raw = raw[raw['r_history'].str.endswith('1')]
-    raw = raw[raw['r_history'].str.count('3') == 1]
     raw['log(last_halflife)'] = np.log(raw['last_halflife'])
     raw['log(halflife)'] = np.log(raw['halflife'])
-    raw['log(difficulty)'] = np.log(raw['difficulty'])
+    raw['log(d)'] = np.log(raw['d'])
 
-    fig = px.scatter_3d(raw, x='log(last_halflife)', y='last_p_recall',
-                        z='log(difficulty)', color='log(halflife)',
+    fig = px.scatter_3d(raw, x='last_p_recall', y='log(last_halflife)',
+                        z='log(halflife)', color='d',
+                        hover_name='label')
+    fig.update_traces(marker_size=2, selector=dict(type='scatter3d'))
+    fig.update_scenes(xaxis_autorange="reversed")
+    fig.write_html("./plot/DHP_model_raw.html")
+    fig.write_image(f"plot/DHP_model_raw.pdf", width=1000, height=1000)
+    time.sleep(3)
+    fig.write_image(f"plot/DHP_model_raw.pdf", width=1000, height=1000)
+
+    raw = raw[raw['r_history'].str.endswith('1')]
+    raw = raw[raw['r_history'].str.count('0') == 1]
+
+    fig = px.scatter_3d(raw, x='last_p_recall', y='log(last_halflife)',
+                        z='log(d)', color='log(halflife)',
                         hover_name='label')
 
     d_array, h_array, p_array = np.mgrid[1:10:10j, raw['last_halflife'].min():raw['last_halflife'].max():500j,
                                 raw['last_p_recall'].min():raw['last_p_recall'].max():100j]
     value = np.log(cal_recall_halflife(d_array, h_array, p_array))
     fig.add_isosurface(
-        x=np.log(h_array.flatten()),
-        y=p_array.flatten(),
+        x=p_array.flatten(),
+        y=np.log(h_array.flatten()),
         z=np.log(d_array.flatten()),
         value=value.flatten(),
         isomin=raw['log(halflife)'].min(),
@@ -40,11 +112,14 @@ def raw_data_visualize():
         caps=dict(x_show=False, y_show=False, z_show=False))
     fig.update_traces(marker_size=2, selector=dict(type='scatter3d'))
     fig.write_html("./plot/DHP_model.html")
-    fig.show()
+    fig.write_image(f"plot/DHP_model.pdf", width=1000, height=1000)
+    time.sleep(3)
+    fig.write_image(f"plot/DHP_model.pdf", width=1000, height=1000)
+    # fig.show()
 
 
 def dhp_model_visualize():
-    h_array = np.arange(0.5, 500.5, 1)  # 03
+    h_array = np.arange(0.5, 900.5, 1)  # 03
     p_array = np.arange(0.97, 0.3, -0.01)  # 03
     h_array, p_array = np.meshgrid(h_array, p_array)
     surface = [
@@ -57,7 +132,10 @@ def dhp_model_visualize():
         yaxis_title='last_p_recall',
         zaxis_title='halflife'))
     fig.write_html(f"./plot/DHP_recall_model.html")
-    fig.show()
+    fig.write_image(f"plot/DHP_recall_model.pdf", width=1000, height=1000)
+    time.sleep(3)
+    fig.write_image(f"plot/DHP_recall_model.pdf", width=1000, height=1000)
+    # fig.show()
     surface = [
         go.Surface(x=h_array, y=p_array, z=cal_recall_halflife(diff, h_array, p_array) / h_array,
                    surfacecolor=np.full_like(h_array, diff), cmin=0.5, cmax=10.5) for diff in
@@ -68,7 +146,10 @@ def dhp_model_visualize():
         yaxis_title='last_p_recall',
         zaxis_title='halflife/last_halflife'))
     fig.write_html(f"./plot/DHP_recall_inc_model.html")
-    fig.show()
+    fig.write_image(f"plot/DHP_recall_inc_model.pdf", width=1000, height=1000)
+    time.sleep(3)
+    fig.write_image(f"plot/DHP_recall_inc_model.pdf", width=1000, height=1000)
+    # fig.show()
     surface = [
         go.Surface(x=h_array, y=p_array, z=cal_forget_halflife(diff, h_array, p_array),
                    surfacecolor=np.full_like(h_array, diff), cmin=0.5, cmax=10.5) for diff in
@@ -79,63 +160,82 @@ def dhp_model_visualize():
         yaxis_title='last_p_recall',
         zaxis_title='halflife'))
     fig.write_html(f"./plot/DHP_forget_model.html")
-    fig.show()
+    fig.write_image(f"plot/DHP_forget_model.pdf", width=1000, height=1000)
+    time.sleep(3)
+    fig.write_image(f"plot/DHP_forget_model.pdf", width=1000, height=1000)
+    # fig.show()
 
 
 def policy_action_visualize():
     df = pd.DataFrame()
-    for d in range(1, 21):
+    for d in range(1, 19):
         dataset = pd.read_csv(f"./algo/result/ivl-{d}.csv", header=None, index_col=None)
         dataset.columns = ['halflife', f'{d}']
         df = pd.concat([df, dataset[f'{d}']], axis=1)
     halflife = dataset['halflife'].values[30:-1]
-    difficulty = np.arange(1, 21, 1)
-    difficulty, halflife = np.meshgrid(difficulty, halflife)
+    d = np.arange(1, 19, 1)
+    d, halflife = np.meshgrid(d, halflife)
     delta_t = df.values[30:-1, :]
-    fig = go.Figure(data=go.Surface(x=halflife, y=difficulty, z=delta_t))
+    fig = go.Figure(data=go.Surface(x=d, y=halflife, z=delta_t))
+    fig.update_scenes(xaxis_autorange="reversed")
+    fig.update_scenes(yaxis_autorange="reversed")
     fig.update_layout(scene=dict(
-        xaxis_title='halflife',
-        yaxis_title='difficulty',
+        xaxis_title='d',
+        yaxis_title='halflife',
         zaxis_title='delta_t'))
     fig.write_html(f"./plot/policy_delta_t.html")
-    fig.show()
+    fig.write_image(f"plot/policy_delta_t.pdf", width=1000, height=1000)
+    time.sleep(3)
+    fig.write_image(f"plot/policy_delta_t.pdf", width=1000, height=1000)
+    # fig.show()
 
     df = pd.DataFrame()
-    for d in range(1, 21):
+    for d in range(1, 19):
         dataset = pd.read_csv(f"./algo/result/cost-{d}.csv", header=None, index_col=None)
         dataset.columns = ['halflife', f'{d}']
         df = pd.concat([df, dataset[f'{d}']], axis=1)
     halflife = dataset['halflife'].values[30:-1]
-    difficulty = np.arange(1, 21, 1)
-    difficulty, halflife = np.meshgrid(difficulty, halflife)
+    d = np.arange(1, 19, 1)
+    d, halflife = np.meshgrid(d, halflife)
     cost = df.values[30:-1, :]
-    fig = go.Figure(data=go.Surface(x=halflife, y=difficulty, z=cost))
+    fig = go.Figure(data=go.Surface(x=d, y=halflife, z=cost))
+    fig.update_scenes(xaxis_autorange="reversed")
     fig.update_layout(scene=dict(
-        xaxis_title='halflife',
-        yaxis_title='difficulty',
+        xaxis_title='d',
+        yaxis_title='halflife',
         zaxis_title='cost'))
     fig.write_html(f"./plot/policy_cost.html")
-    fig.show()
+    fig.write_image(f"plot/policy_cost.pdf", width=1000, height=1000)
+    time.sleep(3)
+    fig.write_image(f"plot/policy_cost.pdf", width=1000, height=1000)
+    # fig.show()
 
     df = pd.DataFrame()
-    for d in range(1, 21):
+    for d in range(1, 19):
         dataset = pd.read_csv(f"./algo/result/recall-{d}.csv", header=None, index_col=None)
         dataset.columns = ['halflife', f'{d}']
         df = pd.concat([df, dataset[f'{d}']], axis=1)
     halflife = dataset['halflife'].values[30:-1]
-    difficulty = np.arange(1, 21, 1)
-    difficulty, halflife = np.meshgrid(difficulty, halflife)
+    d = np.arange(1, 19, 1)
+    d, halflife = np.meshgrid(d, halflife)
     p_recall = df.values[30:-1, :]
-    fig = go.Figure(data=go.Surface(x=halflife, y=difficulty, z=p_recall))
+    fig = go.Figure(data=go.Surface(x=d, y=halflife, z=p_recall))
+    fig.update_scenes(xaxis_autorange="reversed")
+    fig.update_scenes(yaxis_autorange="reversed")
     fig.update_layout(scene=dict(
-        xaxis_title='halflife',
-        yaxis_title='difficulty',
+        xaxis_title='d',
+        yaxis_title='halflife',
         zaxis_title='p_recall'))
     fig.write_html(f"./plot/policy_p_recall.html")
-    fig.show()
+    fig.write_image(f"plot/policy_p_recall.pdf", width=1000, height=1000)
+    time.sleep(3)
+    fig.write_image(f"plot/policy_p_recall.pdf", width=1000, height=1000)
+    # fig.show()
 
 
 if __name__ == "__main__":
-    raw_data_visualize()
-    dhp_model_visualize()
+    # difficulty_visualize()
+    # forgetting_curve_visualize()
+    # raw_data_visualize()
+    # dhp_model_visualize()
     policy_action_visualize()

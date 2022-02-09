@@ -23,15 +23,16 @@ def cal_start_halflife(difficulty):
 
 def cal_recall_halflife(difficulty, halflife, p_recall):
     return halflife * (
-            1 + np.exp(3.80863264) * np.power(difficulty, -0.53420593) * np.power(halflife, -0.127362) * np.power(
-        1 - p_recall, 0.9678043))
+            1 + np.exp(3.81) * np.power(difficulty, -0.534) * np.power(halflife, -0.127) * np.power(
+        1 - p_recall, 0.97))
 
 
 def cal_forget_halflife(difficulty, halflife, p_recall):
-    return np.exp(-0.04158382) * np.power(difficulty, -0.04067209) * np.power(halflife, 0.37745957) * np.power(
-        1 - p_recall, -0.22724425)
+    return np.exp(-0.041) * np.power(difficulty, -0.041) * np.power(halflife, 0.377) * np.power(
+        1 - p_recall, -0.227)
 
 
+# the following code is from https://github.com/Networks-Learning/memorize
 def intensity(t, n_t, q):
     return 1.0 / np.sqrt(q) * (1 - np.exp(-n_t * t))
 

@@ -22,9 +22,9 @@ float cal_start_halflife(int difficulty) {
 
 float cal_next_recall_halflife(float h, float p, int d, int recall) {
     if (recall == 1) {
-        return h * (1 + exp(3.80863264) * pow(d, -0.53420593) * pow(h, -0.127362) * pow(1 - p, 0.967804));
+        return h * (1 + exp(3.81) * pow(d, -0.534) * pow(h, -0.127) * pow(1 - p, 0.97));
     } else {
-        return exp(-0.04158382) * pow(d, -0.04067209) * pow(h, 0.37745957) * pow(1 - p, -0.22724425);
+        return exp(-0.041) * pow(d, -0.041) * pow(h, 0.377) * pow(1 - p, -0.227);
     }
 }
 

@@ -75,11 +75,11 @@ def fit_recall_halflife(raw):
     raw['predict_halflife_hlr'] = y_pred
     fig = go.Figure()
     fig.add_trace(
-        go.Scatter(x=raw['halflife'], y=raw['predict_halflife_dhp'], marker_size=np.log(raw['group_cnt']) / 2,
+        go.Scatter(x=raw['halflife'], y=raw['predict_halflife_dhp'], marker_size=np.log(raw['group_cnt']),
                    mode='markers',
                    name='DHP'))
     fig.add_trace(
-        go.Scatter(x=raw['halflife'], y=raw['predict_halflife_hlr'], marker_size=np.log(raw['group_cnt']) / 2,
+        go.Scatter(x=raw['halflife'], y=raw['predict_halflife_hlr'], marker_size=np.log(raw['group_cnt']),
                    mode='markers',
                    name='HLR', opacity=0.7))
     fig.update_xaxes(title_text='observed half-life after recall')
@@ -147,11 +147,11 @@ def fit_forget_halflife(raw):
     raw['predict_halflife_hlr'] = y_pred
     fig = go.Figure()
     fig.add_trace(
-        go.Scatter(x=raw['halflife'], y=raw['predict_halflife_dhp'], marker_size=np.log(raw['group_cnt']) / 2,
+        go.Scatter(x=raw['halflife'], y=raw['predict_halflife_dhp'], marker_size=np.log(raw['group_cnt']),
                    mode='markers',
                    name='DHP'))
     fig.add_trace(
-        go.Scatter(x=raw['halflife'], y=raw['predict_halflife_hlr'], marker_size=np.log(raw['group_cnt']) / 2,
+        go.Scatter(x=raw['halflife'], y=raw['predict_halflife_hlr'], marker_size=np.log(raw['group_cnt']),
                    mode='markers',
                    name='HLR', opacity=0.7))
     fig.update_xaxes(title_text='observed half-life after forget')

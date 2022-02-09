@@ -234,8 +234,8 @@ def policy_action_visualize():
 
 
 if __name__ == "__main__":
-    # difficulty_visualize()
-    # forgetting_curve_visualize()
-    # raw_data_visualize()
-    # dhp_model_visualize()
+    difficulty_visualize()
+    forgetting_curve_visualize()
+    raw_data_visualize()
+    dhp_model_visualize()
     policy_action_visualize()

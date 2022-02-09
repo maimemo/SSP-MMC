@@ -200,23 +200,23 @@ if __name__ == "__main__":
         total_cost = int(sum(cost_per_day))
 
         plt.figure(1)
-        plt.plot(record_per_day, label=f'{method}', linewidth=0.8)
+        plt.plot(record_per_day, label=f'{method}')
 
         plt.figure(2)
-        plt.plot(meet_target_per_day, label=f'{method}', linewidth=0.8)
+        plt.plot(meet_target_per_day, label=f'{method}')
         cost_day = np.argmax(meet_target_per_day >= compare_target)
         if cost_day > 0:
             print(f'cost day: {cost_day}')
             plt.plot(cost_day, compare_target, 'k*', linewidth=2)
 
         plt.figure(3)
-        plt.plot(new_item_per_day_average_per_period, label=f'{method}', linewidth=0.8)
+        plt.plot(new_item_per_day_average_per_period, label=f'{method}')
 
         plt.figure(4)
-        plt.plot(cost_per_day_average_per_period, label=f'{method}', linewidth=0.8)
+        plt.plot(cost_per_day_average_per_period, label=f'{method}')
 
         plt.figure(5)
-        plt.plot(learned_per_day, label=f'{method}', linewidth=0.8)
+        plt.plot(learned_per_day, label=f'{method}')
 
         print('acc learn', total_learned)
         print('meet target', meet_target)
@@ -236,7 +236,7 @@ if __name__ == "__main__":
         # plt.plot(....)
         pdf.savefig()
     plt.figure(2)
-    plt.plot((0, learn_days), (compare_target, compare_target), color='black', linestyle='dotted', linewidth=0.8)
+    plt.plot((0, learn_days), (compare_target, compare_target), color='black', linestyle='dotted')
     plt.title(f"day cost limit:{day_cost_limit}-learn days:{learn_days}")
     plt.xlabel("days")
     plt.ylabel("THR")

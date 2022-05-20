@@ -7,10 +7,17 @@ import plotly.graph_objects as go
 from model.utils import *
 
 plt.style.use('seaborn-whitegrid')
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
-plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
-plt.rcParams['figure.figsize'] = (8.0, 6.0)
-plt.rcParams['figure.dpi'] = 300
+camera = dict(
+    up=dict(x=0, y=0, z=1),
+    center=dict(x=0, y=0, z=0),
+    eye=dict(x=1.5, y=1.5, z=1.25)
+)
+
+
+# plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+# plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+# plt.rcParams['figure.figsize'] = (8.0, 6.0)
+# plt.rcParams['figure.dpi'] = 300
 
 
 def difficulty_visualize():
@@ -18,20 +25,26 @@ def difficulty_visualize():
     u = raw['p_recall'].mean()
     std = raw['p_recall'].std()
     print(u, std)
-    fig = px.histogram(raw, x="p_recall", nbins=20)
-    fig.update_xaxes(title_text='probability of P(recall)')
-    fig.update_layout(bargap=0.2)
-    # fig.show()
-    fig.write_image("plot/distribution_p.pdf")
-    time.sleep(3)
-    fig.write_image("plot/distribution_p.pdf")
-    fig = px.histogram(raw, x="d", text_auto=True)
-    fig.update_xaxes(title_text='difficulty')
-    fig.update_layout(bargap=0.2)
-    # fig.show()
-    fig.write_image("plot/distribution_d.pdf")
-    time.sleep(3)
-    fig.write_image("plot/distribution_d.pdf")
+    plt.hist(raw['p_recall'], bins=20, rwidth=0.8)
+    plt.savefig("plot/distribution_p.eps")
+    plt.cla()
+    plt.hist(raw['d'], rwidth=0.8)
+    plt.savefig("plot/distribution_d.eps")
+    plt.cla()
+    # fig = px.histogram(raw, x="p_recall", nbins=20)
+    # fig.update_xaxes(title_text='probability of P(recall)')
+    # fig.update_layout(bargap=0.2)
+    # # fig.show()
+    # fig.write_image("plot/distribution_p.pdf")
+    # time.sleep(3)
+    # fig.write_image("plot/distribution_p.pdf")
+    # fig = px.histogram(raw, x="d", text_auto=True)
+    # fig.update_xaxes(title_text='difficulty')
+    # fig.update_layout(bargap=0.2)
+    # # fig.show()
+    # fig.write_image("plot/distribution_d.pdf")
+    # time.sleep(3)
+    # fig.write_image("plot/distribution_d.pdf")
 
 
 def forgetting_curve_visualize():
@@ -85,9 +98,14 @@ def raw_data_visualize():
                         hover_name='label')
     fig.update_traces(marker_size=2, selector=dict(type='scatter3d'))
     fig.update_scenes(xaxis_autorange="reversed")
-    fig.write_html("./plot/DHP_model_raw.html")
-    fig.write_image(f"plot/DHP_model_raw.pdf", width=1000, height=1000)
-    time.sleep(3)
+    fig.update_layout(
+        scene_camera=camera,
+        scene=dict(
+            xaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
+            yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
+            zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
+    fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
+    fig.update_coloraxes(colorbar_tickfont_size=16)
     fig.write_image(f"plot/DHP_model_raw.pdf", width=1000, height=1000)
 
     raw = raw[raw['r_history'].str.endswith('1')]
@@ -111,9 +129,13 @@ def raw_data_visualize():
         colorbar_nticks=10, showscale=False,
         caps=dict(x_show=False, y_show=False, z_show=False))
     fig.update_traces(marker_size=2, selector=dict(type='scatter3d'))
-    fig.write_html("./plot/DHP_model.html")
-    fig.write_image(f"plot/DHP_model.pdf", width=1000, height=1000)
-    time.sleep(3)
+    fig.update_layout(
+        scene=dict(
+            xaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
+            yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
+            zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
+    fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
+    fig.update_traces(colorbar_tickfont_size=24, selector=dict(type='isosurface'))
     fig.write_image(f"plot/DHP_model.pdf", width=1000, height=1000)
     # fig.show()
 
@@ -131,9 +153,15 @@ def dhp_model_visualize():
         xaxis_title='last_halflife',
         yaxis_title='last_p_recall',
         zaxis_title='halflife'))
-    fig.write_html(f"./plot/DHP_recall_model.html")
-    fig.write_image(f"plot/DHP_recall_model.pdf", width=1000, height=1000)
-    time.sleep(3)
+    fig.update_layout(
+        scene_camera=camera,
+        scene=dict(
+            xaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
+            yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16), nticks=5),
+            zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
+    fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
+    fig.update_traces(colorbar_tickfont_size=18, selector=dict(type='surface'))
+    # fig.write_html(f"./plot/DHP_recall_model.html")
     fig.write_image(f"plot/DHP_recall_model.pdf", width=1000, height=1000)
     # fig.show()
     surface = [
@@ -145,9 +173,15 @@ def dhp_model_visualize():
         xaxis_title='last_halflife',
         yaxis_title='last_p_recall',
         zaxis_title='halflife/last_halflife'))
-    fig.write_html(f"./plot/DHP_recall_inc_model.html")
-    fig.write_image(f"plot/DHP_recall_inc_model.pdf", width=1000, height=1000)
-    time.sleep(3)
+    # fig.write_html(f"./plot/DHP_recall_inc_model.html")
+    fig.update_layout(
+        scene_camera=camera,
+        scene=dict(
+            xaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
+            yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16), nticks=5),
+            zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
+    fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
+    fig.update_coloraxes(colorbar_tickfont_size=16)
     fig.write_image(f"plot/DHP_recall_inc_model.pdf", width=1000, height=1000)
     # fig.show()
     surface = [
@@ -159,9 +193,15 @@ def dhp_model_visualize():
         xaxis_title='last_halflife',
         yaxis_title='last_p_recall',
         zaxis_title='halflife'))
-    fig.write_html(f"./plot/DHP_forget_model.html")
-    fig.write_image(f"plot/DHP_forget_model.pdf", width=1000, height=1000)
-    time.sleep(3)
+    fig.update_layout(
+        scene_camera=camera,
+        scene=dict(
+            xaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
+            yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16), nticks=5),
+            zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
+    fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
+    fig.update_coloraxes(colorbar_tickfont_size=16)
+    # fig.write_html(f"./plot/DHP_forget_model.html")
     fig.write_image(f"plot/DHP_forget_model.pdf", width=1000, height=1000)
     # fig.show()
 
@@ -183,9 +223,14 @@ def policy_action_visualize():
         xaxis_title='d',
         yaxis_title='halflife',
         zaxis_title='delta_t'))
-    fig.write_html(f"./plot/policy_delta_t.html")
-    fig.write_image(f"plot/policy_delta_t.pdf", width=1000, height=1000)
-    time.sleep(3)
+    fig.update_layout(
+        scene_camera=camera,
+        scene=dict(
+            xaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
+            yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16), nticks=4),
+            zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
+    fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
+    fig.update_traces(colorbar_tickfont_size=18, selector=dict(type='surface'))
     fig.write_image(f"plot/policy_delta_t.pdf", width=1000, height=1000)
     # fig.show()
 
@@ -204,9 +249,14 @@ def policy_action_visualize():
         xaxis_title='d',
         yaxis_title='halflife',
         zaxis_title='cost'))
-    fig.write_html(f"./plot/policy_cost.html")
-    fig.write_image(f"plot/policy_cost.pdf", width=1000, height=1000)
-    time.sleep(3)
+    fig.update_layout(
+        scene_camera=camera,
+        scene=dict(
+            xaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
+            yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16), nticks=4),
+            zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
+    fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
+    fig.update_traces(colorbar_tickfont_size=18, selector=dict(type='surface'))
     fig.write_image(f"plot/policy_cost.pdf", width=1000, height=1000)
     # fig.show()
 
@@ -226,16 +276,21 @@ def policy_action_visualize():
         xaxis_title='d',
         yaxis_title='halflife',
         zaxis_title='p_recall'))
-    fig.write_html(f"./plot/policy_p_recall.html")
-    fig.write_image(f"plot/policy_p_recall.pdf", width=1000, height=1000)
-    time.sleep(3)
+    fig.update_layout(
+        scene_camera=camera,
+        scene=dict(
+            xaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
+            yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16), nticks=4),
+            zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
+    fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
+    fig.update_traces(colorbar_tickfont_size=18, selector=dict(type='surface'))
     fig.write_image(f"plot/policy_p_recall.pdf", width=1000, height=1000)
     # fig.show()
 
 
 if __name__ == "__main__":
-    difficulty_visualize()
-    forgetting_curve_visualize()
-    raw_data_visualize()
+    # difficulty_visualize()
+    # forgetting_curve_visualize()
+    # raw_data_visualize()
     dhp_model_visualize()
-    policy_action_visualize()
+    # policy_action_visualize()

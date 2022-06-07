@@ -82,8 +82,9 @@ def fit_recall_halflife(raw):
         go.Scatter(x=raw['halflife'], y=raw['predict_halflife_hlr'], marker_size=np.log(raw['group_cnt']),
                    mode='markers',
                    name='HLR', opacity=0.7))
-    fig.update_xaxes(title_text='observed half-life after recall')
-    fig.update_yaxes(title_text='predicted half-life after recall')
+    fig.update_xaxes(title_text='observed half-life after recall', title_font=dict(size=18), tickfont=dict(size=14))
+    fig.update_yaxes(title_text='predicted half-life after recall', title_font=dict(size=18), tickfont=dict(size=14))
+    fig.update_layout(legend_font_size=14, margin_t=10)
     fig.write_image(f"plot/fit_recall_halflife.pdf")
     time.sleep(3)
     fig.write_image(f"plot/fit_recall_halflife.pdf")
@@ -154,8 +155,9 @@ def fit_forget_halflife(raw):
         go.Scatter(x=raw['halflife'], y=raw['predict_halflife_hlr'], marker_size=np.log(raw['group_cnt']),
                    mode='markers',
                    name='HLR', opacity=0.7))
-    fig.update_xaxes(title_text='observed half-life after forget')
-    fig.update_yaxes(title_text='predicted half-life after forget')
+    fig.update_xaxes(title_text='observed half-life after forget', title_font=dict(size=18), tickfont=dict(size=14))
+    fig.update_yaxes(title_text='predicted half-life after forget', title_font=dict(size=18), tickfont=dict(size=14))
+    fig.update_layout(legend_font_size=14, margin_t=10)
     fig.write_image(f"plot/fit_forget_halflife.pdf")
     time.sleep(3)
     fig.write_image(f"plot/fit_forget_halflife.pdf")
@@ -192,9 +194,11 @@ def fit_hlr_model(raw):
 
     raw['predict_halflife'] = y_pred
     fig = px.scatter(raw, x='halflife', y='predict_halflife', size='group_cnt')
-    fig.write_image(f"plot/fit_hlr_model.pdf")
+    fig.update_xaxes(title_font=dict(size=18), tickfont=dict(size=14))
+    fig.update_yaxes(title_font=dict(size=18), tickfont=dict(size=14))
+    fig.write_image(f"plot/fit_hlr_model.pdf", width=600, height=360)
     time.sleep(3)
-    fig.write_image(f"plot/fit_hlr_model.pdf")
+    fig.write_image(f"plot/fit_hlr_model.pdf", width=600, height=360)
     # fig.show()
 
 

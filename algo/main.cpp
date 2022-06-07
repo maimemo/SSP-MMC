@@ -45,7 +45,7 @@ int main() {
     auto cost_list = new float[d_limit][max_index - min_index];
     for (int d = 1; d <= d_limit; d++) {
         for (int i = 0; i < index_len - 1; i++) {
-            cost_list[d - 1][i] = (float) 20000;
+            cost_list[d - 1][i] = (float) 2000;
         }
         cost_list[d - 1][index_len - 1] = 0;
     }
@@ -105,15 +105,15 @@ int main() {
                 int ivl = used_interval_list[d - 1][h_index];
                 float cost = cost_list[d - 1][h_index];
                 float recall = recall_list[d - 1][h_index];
-                do {
-                    float h = cal_index_halflife(h_index);
-                    printf("h:%10.4f\tivl:%5d\tr:%.4f\tcost:%10.4f\n", h, ivl, recall, cost);
-                    h_index = next_index[d - 1][h_index];
-                    if (ivl <= 0) break;
-                    ivl = used_interval_list[d - 1][h_index];
-                    recall = recall_list[d - 1][h_index];
-                    cost = cost_list[d - 1][h_index];
-                } while (h_index < index_len);
+//                do {
+//                    float h = cal_index_halflife(h_index);
+//                    printf("h:%10.4f\tivl:%5d\tr:%.4f\tcost:%10.4f\n", h, ivl, recall, cost);
+//                    h_index = next_index[d - 1][h_index];
+//                    if (ivl <= 0) break;
+//                    ivl = used_interval_list[d - 1][h_index];
+//                    recall = recall_list[d - 1][h_index];
+//                    cost = cost_list[d - 1][h_index];
+//                } while (h_index < index_len);
                 printf("D %d\titer %d\tdiff %f\ttime %ds\tcost %f\n", d, i, diff,
                        (int) time((time_t *) nullptr) - start_time,
                        cost_list[d - 1][h0_index]);

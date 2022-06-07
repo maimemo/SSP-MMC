@@ -25,26 +25,33 @@ def difficulty_visualize():
     u = raw['p_recall'].mean()
     std = raw['p_recall'].std()
     print(u, std)
-    plt.hist(raw['p_recall'], bins=20, rwidth=0.8)
-    plt.savefig("plot/distribution_p.eps")
-    plt.cla()
-    plt.hist(raw['d'], rwidth=0.8)
-    plt.savefig("plot/distribution_d.eps")
-    plt.cla()
-    # fig = px.histogram(raw, x="p_recall", nbins=20)
-    # fig.update_xaxes(title_text='probability of P(recall)')
-    # fig.update_layout(bargap=0.2)
-    # # fig.show()
-    # fig.write_image("plot/distribution_p.pdf")
-    # time.sleep(3)
-    # fig.write_image("plot/distribution_p.pdf")
-    # fig = px.histogram(raw, x="d", text_auto=True)
-    # fig.update_xaxes(title_text='difficulty')
-    # fig.update_layout(bargap=0.2)
-    # # fig.show()
-    # fig.write_image("plot/distribution_d.pdf")
-    # time.sleep(3)
-    # fig.write_image("plot/distribution_d.pdf")
+    # plt.hist(raw['p_recall'], bins=20, rwidth=0.8)
+    # plt.xlabel('probability of recall')
+    # plt.ylabel('samples')
+    # plt.savefig("plot/distribution_p.eps")
+    # plt.cla()
+    # plt.hist(raw['d'], rwidth=0.8)
+    # plt.xlabel('difficulty')
+    # plt.ylabel('samples')
+    # plt.savefig("plot/distribution_d.eps")
+    # plt.cla()
+    fig = px.histogram(raw, x="p_recall", nbins=20)
+    fig.update_xaxes(title_text='probability of P(recall)', title_font=dict(size=18), tickfont=dict(size=14),
+                     range=[0, 1])
+    fig.update_yaxes(title_font=dict(size=18), tickfont=dict(size=14))
+    fig.update_layout(bargap=0.2, margin_t=10)
+    # fig.show()
+    fig.write_image("plot/distribution_p.pdf", width=600, height=360)
+    time.sleep(3)
+    fig.write_image("plot/distribution_p.pdf", width=600, height=360)
+    fig = px.histogram(raw, x="d", text_auto=True)
+    fig.update_xaxes(title_text='difficulty', title_font=dict(size=18), tickfont=dict(size=14))
+    fig.update_yaxes(title_font=dict(size=18), tickfont=dict(size=14))
+    fig.update_layout(bargap=0.2, margin_t=10)
+    # fig.show()
+    fig.write_image("plot/distribution_d.pdf", width=600, height=360)
+    time.sleep(3)
+    fig.write_image("plot/distribution_d.pdf", width=600, height=360)
 
 
 def forgetting_curve_visualize():
@@ -77,12 +84,13 @@ def forgetting_curve_visualize():
         xanchor="right",
         x=0.99
     ))
-    fig.update_xaxes(title_text='delta_t')
-    fig.update_yaxes(title_text='p_recall')
+    fig.update_xaxes(title_text='delta_t', title_font=dict(size=18), tickfont=dict(size=14))
+    fig.update_yaxes(title_text='p_recall', title_font=dict(size=18), tickfont=dict(size=14))
+    fig.update_layout(margin_t=10)
     # fig.show()
-    fig.write_image(f"plot/forgetting_curve.pdf")
+    fig.write_image(f"plot/forgetting_curve.pdf", width=600, height=360)
     time.sleep(3)
-    fig.write_image(f"plot/forgetting_curve.pdf")
+    fig.write_image(f"plot/forgetting_curve.pdf", width=600, height=360)
 
 
 def raw_data_visualize():
@@ -105,7 +113,7 @@ def raw_data_visualize():
             yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
             zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
     fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
-    fig.update_coloraxes(colorbar_tickfont_size=16)
+    fig.update_coloraxes(colorbar_tickfont_size=24)
     fig.write_image(f"plot/DHP_model_raw.pdf", width=1000, height=1000)
 
     raw = raw[raw['r_history'].str.endswith('1')]
@@ -135,7 +143,7 @@ def raw_data_visualize():
             yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)),
             zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
     fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
-    fig.update_traces(colorbar_tickfont_size=24, selector=dict(type='isosurface'))
+    fig.update_traces(colorbar_tickfont_size=18, selector=dict(type='isosurface'))
     fig.write_image(f"plot/DHP_model.pdf", width=1000, height=1000)
     # fig.show()
 
@@ -181,7 +189,7 @@ def dhp_model_visualize():
             yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16), nticks=5),
             zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
     fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
-    fig.update_coloraxes(colorbar_tickfont_size=16)
+    fig.update_traces(colorbar_tickfont_size=18, selector=dict(type='surface'))
     fig.write_image(f"plot/DHP_recall_inc_model.pdf", width=1000, height=1000)
     # fig.show()
     surface = [
@@ -200,7 +208,7 @@ def dhp_model_visualize():
             yaxis=dict(title_font=dict(size=24), tickfont=dict(size=16), nticks=5),
             zaxis=dict(title_font=dict(size=24), tickfont=dict(size=16)), ))
     fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
-    fig.update_coloraxes(colorbar_tickfont_size=16)
+    fig.update_traces(colorbar_tickfont_size=18, selector=dict(type='surface'))
     # fig.write_html(f"./plot/DHP_forget_model.html")
     fig.write_image(f"plot/DHP_forget_model.pdf", width=1000, height=1000)
     # fig.show()
@@ -289,8 +297,8 @@ def policy_action_visualize():
 
 
 if __name__ == "__main__":
-    # difficulty_visualize()
-    # forgetting_curve_visualize()
+    difficulty_visualize()
+    forgetting_curve_visualize()
     # raw_data_visualize()
-    dhp_model_visualize()
+    # dhp_model_visualize()
     # policy_action_visualize()

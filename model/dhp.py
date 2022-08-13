@@ -34,7 +34,7 @@ def eval(testset, repeat, fold):
         line_tensor = lineToTensor(list(
             zip([line['r_history']], [line['t_history']]))[0])
         ph = 0
-        d = line['difficulty']
+        d = line['d']
         for j in range(line_tensor.size()[0]):
             ph, d = dhp(line_tensor[j][0], ph, d)
 

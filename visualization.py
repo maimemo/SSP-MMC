@@ -7,6 +7,8 @@ import plotly.graph_objects as go
 from model.utils import *
 
 plt.style.use('seaborn-whitegrid')
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
 camera = dict(
     up=dict(x=0, y=0, z=1),
     center=dict(x=0, y=0, z=0),
@@ -115,6 +117,7 @@ def raw_data_visualize():
     fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
     fig.update_coloraxes(colorbar_tickfont_size=24)
     fig.write_image(f"plot/DHP_model_raw.pdf", width=1000, height=1000)
+    fig.show()
 
     raw = raw[raw['r_history'].str.endswith('1')]
     raw = raw[raw['r_history'].str.count('0') == 1]
@@ -145,7 +148,7 @@ def raw_data_visualize():
     fig.update_layout(margin_b=50, margin_t=50, margin_l=0, margin_r=50, margin_pad=100)
     fig.update_traces(colorbar_tickfont_size=18, selector=dict(type='isosurface'))
     fig.write_image(f"plot/DHP_model.pdf", width=1000, height=1000)
-    # fig.show()
+    fig.show()
 
 
 def dhp_model_visualize():
@@ -299,6 +302,6 @@ def policy_action_visualize():
 if __name__ == "__main__":
     difficulty_visualize()
     forgetting_curve_visualize()
-    # raw_data_visualize()
-    # dhp_model_visualize()
-    # policy_action_visualize()
+    raw_data_visualize()
+    dhp_model_visualize()
+    policy_action_visualize()

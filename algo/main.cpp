@@ -86,7 +86,7 @@ int main() {
                 }
             }
 
-            float diff = h0_cost - cost_list[d - 1][h0_index];
+            float diff = h0_cost - cost_list[d - 1][h0_index - min_index];
             if (i % 1000 == 0) {
                 char name[40];
                 sprintf(name, "./result/ivl-%d.csv", d);

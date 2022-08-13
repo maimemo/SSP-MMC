@@ -6,7 +6,21 @@ Stochastic-Shortest-Path-Minimize-Memorization-Cost (SSP-MMC) is a spaced repeti
 
 This repository contains a public release of the data and code used for several experiments in the following paper (which introduces SSP-MMC):
 
-> Waiting for the result of SIGKDD2022
+> Junyao Ye, Jingyong Su, and Yilong Cao. 2022. A Stochastic Shortest Path Algorithm for Optimizing Spaced Repetition Scheduling. In Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining. ACM, 4381–4390. https://doi.org/10.1145/3534678.3539081
+
+When using this data set and/or software, please cite this publication. A BibTeX record is:
+
+```
+@inproceedings{10.1145/3534678.3539081,
+author = {Ye, Junyao and Su, Jingyong and Cao, Yilong},
+title = {A Stochastic Shortest Path Algorithm for Optimizing Spaced Repetition Scheduling},
+year = {2022},
+publisher = {ACM},
+doi = {10.1145/3534678.3539081},
+pages = {4381–4390},
+numpages = {10}
+}
+```
 
 # Software
 

@@ -15,11 +15,11 @@ duolingo_algo = ('hlr', 'lr', 'leitner', 'pimsleur')
 def load_data(input_file):
     dataset = pd.read_csv(input_file, sep='\t', index_col=None)
     # dataset = dataset[dataset['group_cnt'] > 100000]
-    dataset = dataset[dataset['repeat_long'] > 1]
+    dataset = dataset[dataset['i'] >= 3]
     dataset['r_history'] = dataset['r_history'].map(lambda x: str(int(x)))
     dataset['t_history'] = dataset['t_history'].map(lambda x: x[2:])
     dataset['right'] = dataset['r_history'].str.count('1')
-    dataset['wrong'] = dataset['r_history'].str.count('3')
+    dataset['wrong'] = dataset['r_history'].str.count('0')
     return dataset
 
 

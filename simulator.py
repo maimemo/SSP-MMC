@@ -7,6 +7,8 @@ from model.utils import *
 
 plt.style.use('seaborn')
 plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
 plt.rcParams['figure.figsize'] = (6.0, 4.0)
 plt.rcParams['figure.dpi'] = 300
 

@@ -9,3 +9,5 @@ cmake-build-debug
 *.pth
 *.pkl
 *.html
+*.pyc
+.DS_Store

@@ -29,7 +29,7 @@ float cal_next_recall_halflife(float h, float p, int d, int recall) {
 }
 
 int cal_halflife_index(float h) {
-    return (int) round(log(h) / log(base)) - min_index;
+    return max((int) round(log(h) / log(base)) - min_index, 0);
 }
 
 float cal_index_halflife(int index) {
@@ -86,7 +86,7 @@ int main() {
                 }
             }
 
-            float diff = h0_cost - cost_list[d - 1][h0_index - min_index];
+            float diff = h0_cost - cost_list[d - 1][h0_index];
             if (i % 1000 == 0) {
                 char name[40];
                 sprintf(name, "./result/ivl-%d.csv", d);

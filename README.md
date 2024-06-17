@@ -8,7 +8,7 @@ This repository contains a public release of the data and code used for several 
 
 > Junyao Ye, Jingyong Su, and Yilong Cao. 2022. A Stochastic Shortest Path Algorithm for Optimizing Spaced Repetition Scheduling. In Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining. ACM, 4381–4390.
 
-You can access this paper at: https://dl.acm.org/doi/10.1145/3534678.3539081?cid=99660547150
+You can access this paper at: https://www.maimemo.com/paper/
 
 When using this data set and/or software, please cite this publication. A BibTeX record is:
 

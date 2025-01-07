@@ -9,7 +9,7 @@ from sklearn import metrics
 import plotly.express as px
 import joblib
 
-plt.style.use('seaborn-whitegrid')
+plt.style.use('seaborn-v0_8-whitegrid')
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
 plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 plt.rcParams['figure.figsize'] = (8.0, 6.0)
@@ -166,7 +166,7 @@ def fit_forget_halflife(raw):
 
 def fit_hlr_model(raw):
     print('hlr_model_fitting')
-    corr = raw.corr()
+    corr = raw.select_dtypes(exclude=['object']).corr()
     print(corr)
 
     X = raw[['right', 'wrong', 'd']]

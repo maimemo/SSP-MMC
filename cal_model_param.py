@@ -24,7 +24,7 @@ def fit_recall_halflife(raw):
     raw['log_fi'] = raw['last_p_recall'].map(lambda x: np.log(1 - x))
     raw['log_d'] = raw['d'].map(lambda x: np.log(x))
     raw['log_delta_h'] = np.log(raw['halflife'] - raw['last_halflife'])
-    corr = raw.corr()
+    corr = raw.select_dtypes(exclude=['object']).corr()
     print(corr)
 
     X = raw[['log_d', 'log_h', 'log_fi']]
@@ -98,7 +98,7 @@ def fit_forget_halflife(raw):
     raw['log_fi'] = raw['last_p_recall'].map(lambda x: np.log(1 - x))
     raw['log_d'] = raw['d'].map(lambda x: np.log(x))
 
-    print(raw.corr())
+    print(raw.select_dtypes(exclude=['object']).corr())
 
     X = raw[['log_d', 'log_h', 'log_fi']]
     Y = raw[['log_halflife']]

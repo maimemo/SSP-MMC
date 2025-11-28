@@ -44,7 +44,7 @@ The file `simulator.py` provides an environment for comparing different scheduli
 4. Run `algo/main.cpp` -> optimal policy in `algo/result/`
 5. Run `simulator.py` to compare the SSP-MMC with several baselines.
 
-## Data Set and Format
+## Dataset and Format
 
 The dataset is available on [Dataverse](https://doi.org/10.7910/DVN/VAGUL0) (1.6 GB). This is a 7zipped TSV file containing our experiments' 220 million MaiMemo student memory behavior logs.
 
@@ -52,7 +52,6 @@ The columns are as follows:
 
 - `u` - student user ID who reviewed the word (anonymized)
 - `w` - spelling of the word 
-
 - `i` - total times the user has reviewed the word
 - `d` - difficulty of the word
 - `t_history` - interval sequence of the historic reviews
